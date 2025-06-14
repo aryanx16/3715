@@ -15,6 +15,7 @@ const addQuestion = async (req, res) => {
 
 const getQuestions = async (req, res) => {
   const questions = await Question.find({ user: req.user._id }).sort({ dateSolved: -1 });
+  console.log("questions",questions)
   res.json(questions);
 };
 
