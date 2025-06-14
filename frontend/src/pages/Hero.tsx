@@ -14,9 +14,9 @@ import {
   Star,
   Users,
   Trophy,
-  Play,
   ChevronRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function HeroPage() {
   const heroRef = useRef<HTMLElement>(null);
@@ -264,14 +264,18 @@ export default function HeroPage() {
               </div>
               
               <div className="hero-buttons flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+                <Link to={"/dashboard"}>
                 <button className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl font-semibold text-lg hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 flex items-center gap-2 justify-center">
-                  Start Free Trial
+                  Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
+                </Link>
+                <Link to={"/register"}>
                 <button className="group px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl font-semibold text-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-2 justify-center">
-                  <Play className="w-5 h-5" />
-                  Watch Demo
+                  {/* <Play className="w-5 h-5"  */}
+                  Register
                 </button>
+                </Link>
               </div>
 
               {/* Social Proof */}

@@ -49,18 +49,18 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
-    
+
     // Show loading toast
     const loadingToast = toast.loading('Creating your account...');
-
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", formData);
+      const res = await axios.post(`${BACKEND_URL}/api/auth/register`, formData);
       localStorage.setItem("token", res.data.token);
 
       // Update recoil state after register
@@ -128,9 +128,8 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${
-                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 placeholder="Choose a unique username"
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -150,9 +149,8 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 disabled={isLoading}
-                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${
-                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 placeholder="Create a secure password"
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -163,9 +161,8 @@ export default function Register() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 ${
-                isLoading ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : ''
-              }`}
+              className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 ${isLoading ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : ''
+                }`}
             >
               {isLoading ? (
                 <>
@@ -187,8 +184,8 @@ export default function Register() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
-              <a 
-                href="/login" 
+              <a
+                href="/login"
                 className="font-medium text-blue-600 hover:text-purple-600 transition-colors"
               >
                 Sign in instead
@@ -198,9 +195,8 @@ export default function Register() {
         </div>
 
         {/* Features */}
-        <div className={`mt-8 grid grid-cols-3 gap-4 text-center transition-opacity duration-200 ${
-          isLoading ? 'opacity-50' : 'opacity-100'
-        }`}>
+        <div className={`mt-8 grid grid-cols-3 gap-4 text-center transition-opacity duration-200 ${isLoading ? 'opacity-50' : 'opacity-100'
+          }`}>
           <div className="flex flex-col items-center">
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

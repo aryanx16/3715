@@ -11,13 +11,13 @@ export default function AddQuestion() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: any) => {
     setQuestion({ ...question, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
-    
+
     if (!token) {
       toast.error("You're not logged in!", {
         icon: '🔐',
@@ -35,12 +35,12 @@ export default function AddQuestion() {
     }
 
     setIsLoading(true);
-    
+
     // Show loading toast
     const loadingToast = toast.loading('Adding question...');
-
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     try {
-      const response = await fetch("http://localhost:5000/api/questions", {
+      const response = await fetch(`${BACKEND_URL}/api/questions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function AddQuestion() {
         },
         body: JSON.stringify(question),
       });
-      
+
       if (response.ok) {
         // Dismiss loading toast and show success
         toast.dismiss(loadingToast);
@@ -61,14 +61,14 @@ export default function AddQuestion() {
             color: '#fff',
           },
         });
-        
+
         // Reset form
         setQuestion({ title: "", difficulty: "", link: "", dateSolved: "" });
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add question");
       }
-    } catch (err:any) {
+    } catch (err: any) {
       // Dismiss loading toast and show error
       toast.dismiss(loadingToast);
       toast.error(err.message || "Failed to add question", {
@@ -86,7 +86,7 @@ export default function AddQuestion() {
     }
   };
 
-  const getDifficultyColor = (difficulty:any) => {
+  const getDifficultyColor = (difficulty: any) => {
     switch (difficulty) {
       case 'Easy': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
       case 'Medium': return 'text-amber-600 bg-amber-50 border-amber-200';
@@ -135,9 +135,8 @@ export default function AddQuestion() {
                 value={question.difficulty}
                 onChange={handleChange}
                 disabled={isLoading}
-                className={`w-full px-4 py-3 bg-white border-2 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 appearance-none cursor-pointer ${
-                  question.difficulty ? getDifficultyColor(question.difficulty) : 'border-gray-200'
-                } ${isLoading ? 'opacity-50' : ''}`}
+                className={`w-full px-4 py-3 bg-white border-2 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-gray-900 appearance-none cursor-pointer ${question.difficulty ? getDifficultyColor(question.difficulty) : 'border-gray-200'
+                  } ${isLoading ? 'opacity-50' : ''}`}
               >
                 <option value="" className="text-gray-500">Select difficulty level</option>
                 <option value="Easy" className="text-emerald-600">Easy</option>
@@ -187,9 +186,8 @@ export default function AddQuestion() {
           <button
             onClick={handleSubmit}
             disabled={isLoading}
-            className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mt-8 ${
-              isLoading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mt-8 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
             <CheckCircle2 className="w-5 h-5" />
             {isLoading ? 'Adding Question...' : 'Add Question to Progress'}
