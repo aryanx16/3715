@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../store/authAtom";
+import toast from 'react-hot-toast';
 import axios from "axios";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const setAuth = useSetRecoilState(authState);
   const navigate = useNavigate();
 
@@ -16,15 +17,59 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!form.username || !form.password) {
+      toast.error("Please fill in all fields!", {
+        icon: '📝',
+        duration: 3000,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    
+    // Show loading toast
+    const loadingToast = toast.loading('Signing you in...');
+
     try {
       const res = await axios.post("http://localhost:5000/api/auth/login", form);
       const { token } = res.data;
 
       localStorage.setItem("token", token);
       setAuth({ loggedIn: true, token });
-      navigate("/dashboard");
+      
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success(`Welcome back, ${form.username}!`, {
+        icon: '🎉',
+        duration: 4000,
+        style: {
+          borderRadius: '10px',
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
+      
+      // Navigate after a brief delay to show the success toast
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+      
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Login failed");
+      // Dismiss loading toast and show error
+      toast.dismiss(loadingToast);
+      const errorMessage = err?.response?.data?.message || "Login failed";
+      toast.error(errorMessage, {
+        icon: '🔐',
+        duration: 5000,
+        style: {
+          borderRadius: '10px',
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -44,17 +89,6 @@ export default function Login() {
 
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
-              <div className="flex items-center">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {error}
-              </div>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
@@ -67,7 +101,10 @@ export default function Login() {
                 value={form.username}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500"
+                disabled={isLoading}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${
+                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 placeholder="Enter your username"
               />
             </div>
@@ -83,16 +120,32 @@ export default function Login() {
                 value={form.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500"
+                disabled={isLoading}
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 focus:bg-white text-gray-900 placeholder-gray-500 ${
+                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 placeholder="Enter your password"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={isLoading}
+              className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 ${
+                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Sign In
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
 

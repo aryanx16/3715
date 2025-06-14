@@ -3,15 +3,50 @@ import { useRecoilState } from "recoil";
 import { authState } from "../store/authAtom";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, LogIn, UserPlus, PlusCircle, LayoutDashboard, Code } from "lucide-react";
+import toast from 'react-hot-toast';
 
 export default function Navbar() {
   const [auth, setAuth] = useRecoilState(authState);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setAuth({ loggedIn: false, token: null });
-    navigate("/login");
+    // Show loading toast
+    const loadingToast = toast.loading('Logging out...');
+
+    try {
+      localStorage.removeItem("token");
+      setAuth({ loggedIn: false, token: null });
+      
+      // Dismiss loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success('Logged out successfully!', {
+        icon: '👋',
+        duration: 3000,
+        style: {
+          borderRadius: '10px',
+          background: '#10B981',
+          color: '#fff',
+        },
+      });
+
+      // Navigate after a brief delay to show the success toast
+      setTimeout(() => {
+        navigate("/login");
+      }, 500);
+
+    } catch (error) {
+      // Dismiss loading toast and show error (though this is unlikely to fail)
+      toast.dismiss(loadingToast);
+      toast.error('Something went wrong during logout', {
+        icon: '❌',
+        duration: 3000,
+        style: {
+          borderRadius: '10px',
+          background: '#EF4444',
+          color: '#fff',
+        },
+      });
+    }
   };
 
   return (
@@ -20,7 +55,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           {/* Brand */}
           <Link 
-            to="/" 
+            to="/"
             className="flex items-center gap-3 group transition-all duration-200 hover:scale-105"
           >
             <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-200">
@@ -36,14 +71,14 @@ export default function Navbar() {
             {!auth.loggedIn ? (
               <>
                 <Link 
-                  to="/login" 
+                  to="/login"
                   className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium"
                 >
                   <LogIn size={16} /> 
                   Login
                 </Link>
                 <Link 
-                  to="/register" 
+                  to="/register"
                   className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-medium hover:scale-105"
                 >
                   <UserPlus size={16} /> 
@@ -53,14 +88,14 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link 
-                  to="/dashboard" 
+                  to="/dashboard"
                   className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium"
                 >
                   <LayoutDashboard size={16} /> 
                   Dashboard
                 </Link>
                 <Link 
-                  to="/add-question" 
+                  to="/add-question"
                   className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 font-medium"
                 >
                   <PlusCircle size={16} /> 
