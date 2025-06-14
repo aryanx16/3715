@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import  { useEffect, useRef } from 'react';
 import { 
   Code, 
   TrendingUp, 
@@ -13,7 +13,6 @@ import {
   Zap,
   Star,
   Users,
-  BookOpen,
   Trophy,
   Play,
   ChevronRight
