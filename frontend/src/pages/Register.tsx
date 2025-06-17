@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "../store/authAtom";
 import toast from 'react-hot-toast';
@@ -184,12 +184,12 @@ export default function Register() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
-              <a
-                href="/login"
+              <Link
+                to="/login"
                 className="font-medium text-blue-600 hover:text-purple-600 transition-colors"
               >
                 Sign in instead
-              </a>
+              </Link>
             </p>
           </div>
         </div>
